@@ -93,13 +93,29 @@ public class GameScreenController {
 
         // if random or smart, AI will select its move
         switch (choice) {
-            case 'R':
+            case '0':
                 playerLabel.setText("AI's Turn");
                 ticTacToe.randomMove();
                 break;
-            case 'S':
+            case '1':
                 playerLabel.setText("AI's Turn");
-                ticTacToe.smartMove();
+                ticTacToe.smartOne();
+                break;
+            case '2':
+                playerLabel.setText("AI's Turn");
+                ticTacToe.smartTwo();
+                break;
+            case '3':
+                playerLabel.setText("AI's Turn");
+                ticTacToe.smartThree();
+                break;
+            case '4':
+                playerLabel.setText("AI's Turn");
+                ticTacToe.smartFour();
+                break;
+            case '5':
+                playerLabel.setText("AI's Turn");
+                ticTacToe.smartFive();
                 break;
         }
         refresh();

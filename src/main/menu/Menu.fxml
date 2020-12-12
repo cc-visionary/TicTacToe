@@ -25,7 +25,7 @@
                   <Font size="18.0" />
                </font>
             </Button>
-            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#chooseRandom" text="Level R">
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#chooseRandom" text="Level 0">
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
@@ -33,7 +33,39 @@
                   <Font size="18.0" />
                </font>
             </Button>
-            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#chooseSmart" text="Level S">
+            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#chooseOne" text="Level 1">
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Button>
+            <Button layoutX="10.0" layoutY="124.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#chooseTwo" text="Level 2">
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Button>
+            <Button layoutX="10.0" layoutY="181.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#chooseThree" text="Level 3">
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Button>
+            <Button layoutX="10.0" layoutY="238.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#chooseFour" text="Level 4">
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Button>
+            <Button layoutX="10.0" layoutY="295.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#chooseFive" text="Level 5">
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>

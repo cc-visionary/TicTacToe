@@ -20,12 +20,32 @@ public class MenuController {
 
     @FXML
     public void chooseRandom(ActionEvent ae) throws IOException {
-        goToGameScreen(ae, 'R');
+        goToGameScreen(ae, '0');
     }
 
     @FXML
-    public void chooseSmart(ActionEvent ae) throws IOException {
-        goToGameScreen(ae, 'S');
+    public void chooseOne(ActionEvent ae) throws IOException {
+        goToGameScreen(ae, '1');
+    }
+
+    @FXML
+    public void chooseTwo(ActionEvent ae) throws IOException {
+        goToGameScreen(ae, '2');
+    }
+
+    @FXML
+    public void chooseThree(ActionEvent ae) throws IOException {
+        goToGameScreen(ae, '3');
+    }
+
+    @FXML
+    public void chooseFour(ActionEvent ae) throws IOException {
+        goToGameScreen(ae, '4');
+    }
+
+    @FXML
+    public void chooseFive(ActionEvent ae) throws IOException {
+        goToGameScreen(ae, '5');
     }
 
     private void goToGameScreen(ActionEvent ae, char choice) throws IOException {

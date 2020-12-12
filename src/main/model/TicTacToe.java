@@ -5,6 +5,16 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class TicTacToe {
+    final private int WINNING_MOVES[][][] = {
+            {{0, 0}, {1, 1}, {2, 2}}, // left diagonal
+            {{0, 2}, {1, 1}, {2, 0}}, // right diagonal
+            {{0, 0}, {0, 1}, {0, 2}}, // top horizontal
+            {{1, 0}, {1, 1}, {1, 2}}, // mid horizontal
+            {{2, 0}, {2, 1}, {2, 2}}, // bot horizontal
+            {{0, 0}, {1, 0}, {2, 0}}, // left vertical
+            {{0, 1}, {1, 1}, {2, 1}}, // mid vertical
+            {{0, 2}, {1, 2}, {2, 2}}, // right vertical
+    };
     private int[][] p1Moves, p2Moves;
     private int turn = 1;
 
@@ -25,20 +35,16 @@ public class TicTacToe {
      * @return whether or not the player with that moves has won or not
      */
     public boolean hasWon(int[][] moves) {
-        // horizontals
-        if(moves[0][0] == 1 && moves[0][1] == 1 && moves[0][2] == 1) return true;
-        if(moves[1][0] == 1 && moves[1][1] == 1 && moves[1][2] == 1) return true;
-        if(moves[2][0] == 1 && moves[2][1] == 1 && moves[2][2] == 1) return true;
+        // loops the winning moves
+        for(int winningMove[][] : WINNING_MOVES) {
+            int total = 0;
+            // accumulate the moves made in that winning move
+            for(int move[] : winningMove) total += moves[move[0]][move[1]];
+            // if all move was made in that winning move, then the player has won
+            if(total == 3) return true;
+        }
 
-        // verticals
-        if(moves[0][0] == 1 && moves[1][0] == 1 && moves[2][0] == 1) return true;
-        if(moves[0][1] == 1 && moves[1][1] == 1 && moves[2][1] == 1) return true;
-        if(moves[0][2] == 1 && moves[1][2] == 1 && moves[2][2] == 1) return true;
-
-        // diagonals
-        if(moves[0][0] == 1 && moves[1][1] == 1 && moves[2][2] == 1) return true;
-        if(moves[2][0] == 1 && moves[1][1] == 1 && moves[0][2] == 1) return true;
-
+        // if not, the player hasn't won yet
         return false;
     }
 
@@ -64,7 +70,8 @@ public class TicTacToe {
     }
 
     /**
-     * Lets AI choose a random move based on the available moves
+     * Level 0:
+     *     Lets AI choose a random move based on the available moves
      */
     public void randomMove() {
         Random randomizer = new Random();
@@ -72,7 +79,74 @@ public class TicTacToe {
         move(getAvailableMoves().get(randomMove)[0], getAvailableMoves().get(randomMove)[1]);
     }
 
-    public void smartMove() {
+    /**
+     * Level 1 Smart:
+     *      the agent uses a hard-coded table that generates a move for every possible state/configuration;
+     *      note that since there is a very large number (9!) of possible configurations, the “hard-coded table of moves”
+     *      can make generalizations, take advantage of symmetries, perform some kind of clustering of configurations,
+     *      and the like.
+     *
+     */
+    public void smartOne() {
+        /* Algorithm:
+             1. check number of moves opponent needs to complete any single winning move
+             2. check number of moves AI needs to complete any single winning move
+             3. do the move which needs the lower number of moves to complete any single winning move
+             4. for backup, if moveToStop and moveToWin is both equal to -1, just do a random move
+        */
+
+        /* Main Concept:
+              is to check the number of moves to complete any single winning move and stop that
+              move if its the opponent's, but choose that move if its the AI's
+        */
+
+        int moveToStopOpponent[] = completeMove(p1Moves);
+        int moveToWin[] = completeMove(p2Moves);
+
+        // NOTE: move to be done is determined by the number of moves
+        //       left for each player has to make to win
+
+        System.out.println("MOVES TO STOP OPPONENT:" + moveToStopOpponent[0] + " | MOVES TO WIN:" + moveToWin[0]);
+
+        // if move wasn't made yet, do a random move, or occupy the middle space
+        if(moveToStopOpponent[0] == -1 && moveToWin[0] == -1) randomMove();
+        // do move to stop opponent
+        else if(moveToStopOpponent[0] > moveToWin[0]) move(moveToStopOpponent[1], moveToStopOpponent[2]);
+        // do move to win
+        else move(moveToWin[1], moveToWin[2]);
+    }
+
+    /**
+     * Level 2 Smart:
+     *     the agent uses a search strategy to find the “best” move given the current configuration,
+     *     using some simple heuristics, for example.
+     */
+    public void smartTwo() {
+
+    }
+
+    /**
+     * Level 3 Smart:
+     *     (optional): the agent exhibits higher levels of rationality by adding more complex heuristics
+     *     to the search strategy, or by allowing for some form of learning from past games
+     *     (to know what moves would lead to a win given a certain configuration).
+     */
+    public void smartThree() {
+
+    }
+
+    /**
+     * Level 4Smart
+     */
+    public void smartFour() {
+
+    }
+
+    /**
+     * Level 5 Smart
+     *
+     */
+    public void smartFive() {
 
     }
 
@@ -90,5 +164,48 @@ public class TicTacToe {
         }
 
         return availableMoves;
+    }
+
+    /**
+     * Checks whether a specific move is available or not
+     * @param x row of move
+     * @param y colun of move
+     * @return boolean value determining whether move is available or not
+     */
+    private boolean isMoveAvailable(int x, int y) {
+        ArrayList<int[]> availableMoves = getAvailableMoves();
+        for(int[] move : availableMoves) {
+            if(x == move[0] && y == move[1]) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns the best move to do to complete a winning move
+     * @param moves 3x3 grid representing the move done by a player
+     * @return
+     */
+    private int[] completeMove(int moves[][]) {
+        // number of moves made for winning move, x and y move to make to complete winning move
+        int moveToMake[] = new int[3];
+        // per winning move, check if there is a move that a player can do to win
+        for(int winningMove[][] : WINNING_MOVES) {
+            int movesToComplete = 0;
+            for(int move[] : winningMove) movesToComplete += moves[move[0]][move[1]];
+//            System.out.print(movesToComplete + " ");
+            if(movesToComplete > moveToMake[0]) {
+                // get the move that wasn't done by the player
+                int moveIndex = 0;
+                while((moves[winningMove[moveIndex][0]][winningMove[moveIndex][1]] == 1 || !isMoveAvailable(winningMove[moveIndex][0], winningMove[moveIndex][1])) &&  moveIndex < 2) moveIndex++;
+                // if any move to complete a move is available, set that to be the move to be done
+                if(isMoveAvailable(winningMove[moveIndex][0], winningMove[moveIndex][1])) {
+                    moveToMake[0] = movesToComplete;
+                    moveToMake[1] = winningMove[moveIndex][0];
+                    moveToMake[2] = winningMove[moveIndex][1];
+                }
+            }
+        }
+//        System.out.println();
+        return moveToMake;
     }
 }
