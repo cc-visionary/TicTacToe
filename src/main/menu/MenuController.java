@@ -33,21 +33,6 @@ public class MenuController {
         goToGameScreen(ae, '2');
     }
 
-    @FXML
-    public void chooseThree(ActionEvent ae) throws IOException {
-        goToGameScreen(ae, '3');
-    }
-
-    @FXML
-    public void chooseFour(ActionEvent ae) throws IOException {
-        goToGameScreen(ae, '4');
-    }
-
-    @FXML
-    public void chooseFive(ActionEvent ae) throws IOException {
-        goToGameScreen(ae, '5');
-    }
-
     private void goToGameScreen(ActionEvent ae, char choice) throws IOException {
         Stage primaryStage = (Stage) ((Node) ae.getSource()).getScene().getWindow();
         Parent root = generateGameScreenLoader(choice).load();

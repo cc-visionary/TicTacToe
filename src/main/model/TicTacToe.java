@@ -6,13 +6,13 @@ import java.util.Random;
 
 public class TicTacToe {
     final private int WINNING_MOVES[][][] = {
-            {{0, 0}, {1, 1}, {2, 2}}, // left diagonal
-            {{0, 2}, {1, 1}, {2, 0}}, // right diagonal
+            {{1, 1}, {0, 0}, {2, 2}}, // left diagonal
+            {{1, 1}, {0, 2}, {2, 0}}, // right diagonal
             {{0, 0}, {0, 1}, {0, 2}}, // top horizontal
-            {{1, 0}, {1, 1}, {1, 2}}, // mid horizontal
+            {{1, 1}, {1, 0}, {1, 2}}, // mid horizontal
             {{2, 0}, {2, 1}, {2, 2}}, // bot horizontal
             {{0, 0}, {1, 0}, {2, 0}}, // left vertical
-            {{0, 1}, {1, 1}, {2, 1}}, // mid vertical
+            {{1, 1}, {0, 1}, {2, 1}}, // mid vertical
             {{0, 2}, {1, 2}, {2, 2}}, // right vertical
     };
     private int[][] p1Moves, p2Moves;
@@ -108,7 +108,8 @@ public class TicTacToe {
 
         // System.out.println("MOVES TO STOP OPPONENT:" + moveToStopOpponent[0] + " | MOVES TO WIN:" + moveToWin[0]);
 
-        // if move wasn't made yet, do a random move, or occupy the middle space
+        System.out.println(moveToStopOpponent[0] + " " + moveToWin[0]);
+        // if move wasn't made yet, do a random move
         if(moveToStopOpponent[0] == -1 && moveToWin[0] == -1) randomMove();
         // do move to stop opponent
         else if(moveToStopOpponent[0] > moveToWin[0]) move(moveToStopOpponent[1], moveToStopOpponent[2]);
@@ -117,10 +118,9 @@ public class TicTacToe {
     }
 
     /**
-     * Level 2 Smart:
+     * Level 2 Smart: Minimax
      *     the agent uses a search strategy to find the “best” move given the current configuration,
      *     using some simple heuristics, for example.
-     *     Minimax
      */
     public void smartTwo() {
         final int MAX_DEPTH = 12;
@@ -146,31 +146,9 @@ public class TicTacToe {
     }
 
     /**
-     * Level 3 Smart:
-     *     Minimax
+     * Returns a list of all available moves
+     * @return arraylist of all available moves
      */
-    public void smartThree() {
-
-    }
-
-    /**
-     * Level 4 Smart
-     *     (optional): the agent exhibits higher levels of rationality by adding more complex heuristics
-     *     to the search strategy, or by allowing for some form of learning from past games
-     *     (to know what moves would lead to a win given a certain configuration).
-     */
-    public void smartFour() {
-
-    }
-
-    /**
-     * Level 5 Smart
-     *
-     */
-    public void smartFive() {
-
-    }
-
     private ArrayList<int[]> getAvailableMoves() {
         ArrayList<int[]> availableMoves = new ArrayList<int[]>();
         for(int row = 0; row < 3; row++) {
@@ -234,12 +212,14 @@ public class TicTacToe {
     }
 
     /**
-     *
-     * @param depth
-     * @param alpha
-     * @param beta
-     * @param isMaximum
-     * @return
+     * Minimax with Alpha-Beta Pruning function
+     * Max - P2 (AI)
+     * Min - P1 (Player)
+     * @param depth maximum depth for search tree to search
+     * @param alpha alpha for alpha beta pruning
+     * @param beta  beta for alpha beta pruning
+     * @param isMaximum determines whether to get the maximum or minimum value
+     * @return maximized heuristic value
      */
     public int minimax(int depth, int alpha, int beta, boolean isMaximum) {
         int value = heuristic(p1Moves, p2Moves);
@@ -255,7 +235,6 @@ public class TicTacToe {
                         biggest = Math.max(biggest, minimax(depth - 1, alpha, beta, false));
                         p2Moves[row][col] = 0;
                         alpha = Math.max(alpha, biggest);
-//                        System.out.println(depth + " Biggest:" + biggest + " " + alpha + " " + beta);
                         if(alpha >= beta) return biggest;
                     }
                 }
@@ -271,7 +250,6 @@ public class TicTacToe {
                         lowest = Math.min(lowest, minimax(depth - 1, alpha, beta, true));
                         p1Moves[row][col] = 0;
                         beta = Math.min(beta, lowest);
-//                        System.out.println(depth + " Lowest:" + lowest + " " + alpha + " " + beta);
                         if(beta <= alpha) return lowest;
                     }
                 }
@@ -281,9 +259,10 @@ public class TicTacToe {
     }
 
     /**
-     * number of moves p1 can make to win - number of moves p2 can make to win
+     * if p1 has a winning move, return -10, if p2 has a winning move return 10
+     * if not, return the number of moves p1 can make to win - number of moves p2 can make to win
      * NOTE: you want p2 to win here since p2 is the AI
-     * @return value returned by getting the heuristic
+     * @return heuristic value
      */
     public int heuristic(int[][] p1Moves, int[][] p2Moves) {
         int p1NMoves = 0, p2NMoves = 0;
@@ -302,12 +281,12 @@ public class TicTacToe {
             if(p1Count > 0 && p2Count == 0) {
                 // return -10 if p1 has a winning move
                 if(p1Count == 3) return -10;
-                else p1NMoves += p1Count;
+                else p1NMoves += 3 - p1Count;
             }
             if(p2Count > 0 && p1Count == 0) {
                 // returns 10 if p2 has a winning move
                 if(p2Count == 3) return 10;
-                else p2NMoves += p2Count;
+                else p2NMoves += 3 - p2Count;
             }
         }
         return p2NMoves - p1NMoves;

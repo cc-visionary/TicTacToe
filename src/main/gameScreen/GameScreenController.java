@@ -105,18 +105,6 @@ public class GameScreenController {
                 playerLabel.setText("AI's Turn");
                 ticTacToe.smartTwo();
                 break;
-            case '3':
-                playerLabel.setText("AI's Turn");
-                ticTacToe.smartThree();
-                break;
-            case '4':
-                playerLabel.setText("AI's Turn");
-                ticTacToe.smartFour();
-                break;
-            case '5':
-                playerLabel.setText("AI's Turn");
-                ticTacToe.smartFive();
-                break;
         }
         refresh();
         checkWin();
