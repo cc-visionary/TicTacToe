@@ -103,8 +103,6 @@ public class TicTacToe {
         int moveToStopOpponent[] = completeMove(p1Moves);
         int moveToWin[] = completeMove(p2Moves);
 
-        System.out.println(heuristic(getP1Moves(), getP2Moves()));
-
         // NOTE: move to be done is determined by the number of moves
         //       left for each player has to make to win
 
@@ -116,19 +114,35 @@ public class TicTacToe {
         else if(moveToStopOpponent[0] > moveToWin[0]) move(moveToStopOpponent[1], moveToStopOpponent[2]);
         // do move to win
         else move(moveToWin[1], moveToWin[2]);
-
-        System.out.println(heuristic(getP1Moves(), getP2Moves()));
     }
 
     /**
      * Level 2 Smart:
      *     the agent uses a search strategy to find the “best” move given the current configuration,
      *     using some simple heuristics, for example.
-     *     A*
+     *     Minimax
      */
     public void smartTwo() {
         final int MAX_DEPTH = 12;
+        int[] bestMove = new int[2];
+        int bestValue = Integer.MIN_VALUE;
 
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 3; col++) {
+                if (isMoveAvailable(row, col)) {
+                    p2Moves[row][col] = 1;
+                    int currValue = minimax(MAX_DEPTH, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
+                    System.out.println(currValue + " " + bestValue + " " + row + " " + col);
+                    if (currValue > bestValue) {
+                        bestMove[0] = row;
+                        bestMove[1] = col;
+                        bestValue = currValue;
+                    }
+                    p2Moves[row][col] = 0;
+                }
+            }
+        }
+        move(bestMove[0], bestMove[1]);
     }
 
     /**
@@ -159,12 +173,12 @@ public class TicTacToe {
 
     private ArrayList<int[]> getAvailableMoves() {
         ArrayList<int[]> availableMoves = new ArrayList<int[]>();
-        for(int i = 0; i < 3; i++) {
-            for(int j = 0; j < 3; j++) {
-                if(getP1Moves()[i][j] != 1 && getP2Moves()[i][j] != 1) {
+        for(int row = 0; row < 3; row++) {
+            for(int col = 0; col < 3; col++) {
+                if(getP1Moves()[row][col] != 1 && getP2Moves()[row][col] != 1) {
                     int available[] = new int[2];
-                    available[0] = i;
-                    available[1] = j;
+                    available[0] = row;
+                    available[1] = col;
                     availableMoves.add(available);
                 }
             }
@@ -228,23 +242,48 @@ public class TicTacToe {
      * @return
      */
     public int minimax(int depth, int alpha, int beta, boolean isMaximum) {
-        if(depth == 0) {
+        int value = heuristic(p1Moves, p2Moves);
+        if(Math.abs(value) == 10 || depth == 0 || getAvailableMoves().size() == 0) return value;
 
-        }
-
+        // Maximizing player, find the maximum attainable value.
         if(isMaximum) {
-            int biggest = Integer.MAX_VALUE;
-
+            int biggest = Integer.MIN_VALUE;
+            for(int row = 0; row < 3; row++) {
+                for(int col = 0; col < 3; col++) {
+                    if(isMoveAvailable(row, col)) {
+                        p2Moves[row][col] = 1;
+                        biggest = Math.max(biggest, minimax(depth - 1, alpha, beta, false));
+                        p2Moves[row][col] = 0;
+                        alpha = Math.max(alpha, biggest);
+//                        System.out.println(depth + " Biggest:" + biggest + " " + alpha + " " + beta);
+                        if(alpha >= beta) return biggest;
+                    }
+                }
+            }
             return biggest;
         } else {
+            // Minimizing player, find the minimum attainable value
             int lowest = Integer.MAX_VALUE;
+            for(int row = 0; row < 3; row++) {
+                for(int col = 0; col < 3; col++) {
+                    if(isMoveAvailable(row, col)) {
+                        p1Moves[row][col] = 1;
+                        lowest = Math.min(lowest, minimax(depth - 1, alpha, beta, true));
+                        p1Moves[row][col] = 0;
+                        beta = Math.min(beta, lowest);
+//                        System.out.println(depth + " Lowest:" + lowest + " " + alpha + " " + beta);
+                        if(beta <= alpha) return lowest;
+                    }
+                }
+            }
             return lowest;
         }
     }
 
     /**
-     * number of steps p1 can make to win - number of moves p2 can make to win
-     * @return
+     * number of moves p1 can make to win - number of moves p2 can make to win
+     * NOTE: you want p2 to win here since p2 is the AI
+     * @return value returned by getting the heuristic
      */
     public int heuristic(int[][] p1Moves, int[][] p2Moves) {
         int p1NMoves = 0, p2NMoves = 0;
@@ -259,10 +298,37 @@ public class TicTacToe {
             for(int move[] : winningMoves) p2Count += p2Moves[move[0]][move[1]];
 
             // only count that certain move if the other player doesn't have a move on it
-            if(p1Count > 0 && p2Count == 0) p1NMoves += 3 - p1Count;
-            if(p2Count > 0 && p1Count == 0) p2NMoves += 3 - p2Count;
+            // 3 - count means the number of moves left to make
+            if(p1Count > 0 && p2Count == 0) {
+                // return -10 if p1 has a winning move
+                if(p1Count == 3) return -10;
+                else p1NMoves += p1Count;
+            }
+            if(p2Count > 0 && p1Count == 0) {
+                // returns 10 if p2 has a winning move
+                if(p2Count == 3) return 10;
+                else p2NMoves += p2Count;
+            }
         }
+        return p2NMoves - p1NMoves;
+    }
 
-        return p1NMoves - p2NMoves;
+    /**
+     * Combines the p1 and p2 moves to 1 tic tac toe board
+     * @return 3x3 board representing 0 for p1 moves and 1 for p2 moves
+     */
+    public int[][] getBoard() {
+        int[][] board = new int[][]{{-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}};
+        for(int row = 0; row < 3; row++) {
+            for(int col = 0; col < 3; col++) {
+                if(p1Moves[row][col] == 1) board[row][col] = 0;
+            }
+        }
+        for(int row = 0; row < 3; row++) {
+            for(int col = 0; col < 3; col++) {
+                if(p2Moves[row][col] == 1) board[row][col] = 1;
+            }
+        }
+        return board;
     }
 }
