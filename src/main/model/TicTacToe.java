@@ -103,10 +103,12 @@ public class TicTacToe {
         int moveToStopOpponent[] = completeMove(p1Moves);
         int moveToWin[] = completeMove(p2Moves);
 
+        System.out.println(heuristic(getP1Moves(), getP2Moves()));
+
         // NOTE: move to be done is determined by the number of moves
         //       left for each player has to make to win
 
-        System.out.println("MOVES TO STOP OPPONENT:" + moveToStopOpponent[0] + " | MOVES TO WIN:" + moveToWin[0]);
+        // System.out.println("MOVES TO STOP OPPONENT:" + moveToStopOpponent[0] + " | MOVES TO WIN:" + moveToWin[0]);
 
         // if move wasn't made yet, do a random move, or occupy the middle space
         if(moveToStopOpponent[0] == -1 && moveToWin[0] == -1) randomMove();
@@ -114,29 +116,34 @@ public class TicTacToe {
         else if(moveToStopOpponent[0] > moveToWin[0]) move(moveToStopOpponent[1], moveToStopOpponent[2]);
         // do move to win
         else move(moveToWin[1], moveToWin[2]);
+
+        System.out.println(heuristic(getP1Moves(), getP2Moves()));
     }
 
     /**
      * Level 2 Smart:
      *     the agent uses a search strategy to find the “best” move given the current configuration,
      *     using some simple heuristics, for example.
+     *     A*
      */
     public void smartTwo() {
+        final int MAX_DEPTH = 12;
 
     }
 
     /**
      * Level 3 Smart:
-     *     (optional): the agent exhibits higher levels of rationality by adding more complex heuristics
-     *     to the search strategy, or by allowing for some form of learning from past games
-     *     (to know what moves would lead to a win given a certain configuration).
+     *     Minimax
      */
     public void smartThree() {
 
     }
 
     /**
-     * Level 4Smart
+     * Level 4 Smart
+     *     (optional): the agent exhibits higher levels of rationality by adding more complex heuristics
+     *     to the search strategy, or by allowing for some form of learning from past games
+     *     (to know what moves would lead to a win given a certain configuration).
      */
     public void smartFour() {
 
@@ -169,7 +176,7 @@ public class TicTacToe {
     /**
      * Checks whether a specific move is available or not
      * @param x row of move
-     * @param y colun of move
+     * @param y column of move
      * @return boolean value determining whether move is available or not
      */
     private boolean isMoveAvailable(int x, int y) {
@@ -183,7 +190,10 @@ public class TicTacToe {
     /**
      * Returns the best move to do to complete a winning move
      * @param moves 3x3 grid representing the move done by a player
-     * @return
+     * @return 3-element array where
+     *      index 0: move left to do to complete that winning move
+     *      index 1: row position for player to move
+     *      index 2: column position for player to move
      */
     private int[] completeMove(int moves[][]) {
         // number of moves made for winning move, x and y move to make to complete winning move
@@ -207,5 +217,52 @@ public class TicTacToe {
         }
 //        System.out.println();
         return moveToMake;
+    }
+
+    /**
+     *
+     * @param depth
+     * @param alpha
+     * @param beta
+     * @param isMaximum
+     * @return
+     */
+    public int minimax(int depth, int alpha, int beta, boolean isMaximum) {
+        if(depth == 0) {
+
+        }
+
+        if(isMaximum) {
+            int biggest = Integer.MAX_VALUE;
+
+            return biggest;
+        } else {
+            int lowest = Integer.MAX_VALUE;
+            return lowest;
+        }
+    }
+
+    /**
+     * number of steps p1 can make to win - number of moves p2 can make to win
+     * @return
+     */
+    public int heuristic(int[][] p1Moves, int[][] p2Moves) {
+        int p1NMoves = 0, p2NMoves = 0;
+
+        // Get the number of winning moves each player can make
+        for(int[][] winningMoves : WINNING_MOVES) {
+            int p1Count = 0, p2Count = 0;
+            // checks if p1 "can" win on current move
+            for(int move[] : winningMoves) p1Count += p1Moves[move[0]][move[1]];
+
+            // checks if p2 "can" win on current move
+            for(int move[] : winningMoves) p2Count += p2Moves[move[0]][move[1]];
+
+            // only count that certain move if the other player doesn't have a move on it
+            if(p1Count > 0 && p2Count == 0) p1NMoves += 3 - p1Count;
+            if(p2Count > 0 && p1Count == 0) p2NMoves += 3 - p2Count;
+        }
+
+        return p1NMoves - p2NMoves;
     }
 }
