@@ -38,7 +38,6 @@ public class MenuController {
         Parent root = generateGameScreenLoader(choice).load();
 
         Scene scene = new Scene(root);
-        scene.getStylesheets().add("/main/gameScreen/GameScreen.css");
 
         primaryStage.setScene(scene);
     }

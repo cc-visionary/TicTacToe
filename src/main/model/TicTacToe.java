@@ -132,7 +132,6 @@ public class TicTacToe {
                 if (isMoveAvailable(row, col)) {
                     p2Moves[row][col] = 1;
                     int currValue = minimax(MAX_DEPTH, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
-                    System.out.println(currValue + " " + bestValue + " " + row + " " + col);
                     if (currValue > bestValue) {
                         bestMove[0] = row;
                         bestMove[1] = col;
