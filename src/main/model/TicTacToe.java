@@ -100,8 +100,8 @@ public class TicTacToe {
               move if its the opponent's, but choose that move if its the AI's
         */
 
-        int moveToStopOpponent[] = completeMove(p1Moves);
-        int moveToWin[] = completeMove(p2Moves);
+        int moveToStopOpponent[] = completeMove(p1Moves, p2Moves);
+        int moveToWin[] = completeMove(p2Moves, p1Moves);
 
         // NOTE: move to be done is determined by the number of moves
         //       left for each player has to make to win
@@ -186,15 +186,16 @@ public class TicTacToe {
      *      index 1: row position for player to move
      *      index 2: column position for player to move
      */
-    private int[] completeMove(int moves[][]) {
+    private int[] completeMove(int moves[][], int opponentMoves[][]) {
         // number of moves made for winning move, x and y move to make to complete winning move
         int moveToMake[] = new int[3];
         // per winning move, check if there is a move that a player can do to win
         for(int winningMove[][] : WINNING_MOVES) {
-            int movesToComplete = 0;
+            int movesToComplete = 0, opponentMovesToComplete = 0;
             for(int move[] : winningMove) movesToComplete += moves[move[0]][move[1]];
+            for(int move[] : winningMove) opponentMovesToComplete += opponentMoves[move[0]][move[1]];
 //            System.out.print(movesToComplete + " ");
-            if(movesToComplete > moveToMake[0]) {
+            if(movesToComplete > moveToMake[0] && opponentMovesToComplete == 0) {
                 // get the move that wasn't done by the player
                 int moveIndex = 0;
                 while((moves[winningMove[moveIndex][0]][winningMove[moveIndex][1]] == 1 || !isMoveAvailable(winningMove[moveIndex][0], winningMove[moveIndex][1])) &&  moveIndex < 2) moveIndex++;
